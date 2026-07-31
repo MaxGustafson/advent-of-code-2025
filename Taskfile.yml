@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+vars:
+  GREETING: Hello, world!
+
+tasks:
+  default:
+    desc: Print a greeting message
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  scaffold_solution:
+    desc: Create scaffolding directories for a solution
+    cmds:
+      - mkdir ./solutions/{{.SOLUTION_NAME}}
+      - touch ./solutions/{{.SOLUTION_NAME}}/{{.SOLUTION_NAME}}.py
+      - mkdir ./solutions/{{.SOLUTION_NAME}}/data
+      - touch ./solutions/{{.SOLUTION_NAME}}/data/input_mini.txt
+      - touch ./solutions/{{.SOLUTION_NAME}}/data/input.txt
+      - echo "Scaffolded {{.SOLUTION_NAME}}"
+    silent: true
+
+  destroy_solution:
+    desc: Destroy solution
+    vars:
+    prompt: "Are you sure you want to tear down {{.SOLUTION_NAME}}"
+    cmds: 
+      - rm -r ./solutions/{{.SOLUTION_NAME}}
+      - echo "Removed {{.SOLUTION_NAME}}"
+    silent: true
