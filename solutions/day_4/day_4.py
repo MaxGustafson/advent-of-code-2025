@@ -81,6 +81,57 @@ def process_input(parsed_input : list[str]):
         return map_node_matrix
 
 
+def _update_neighbour_after_removal(row : int, col : int, map_node_matrix : list[list[MapNode]], removal_node_stack : list[MapNode]):
+
+        l_col : int = len(map_node_matrix)
+        l_row : int = len(map_node_matrix[0]) # Assumes same length rows
+
+        #As we are building the table dynamically and updating both nodes, we only need to check for neighbours which have been previously created
+        _DIRECTIONS = [ (-1,-1), (-1,0), (-1,1), ( 0,-1), (0,1), (1,-1), (1,0), (1,1)]
+
+        for dr, dc in _DIRECTIONS:
+                nr, nc = row + dr, col + dc
+
+                if  0 <= nr < l_row and 0 <= nc < l_col:
+                        trg_map_node : MapNode = map_node_matrix[nr][nc]
+                        trg_node_movable : bool = trg_map_node.is_movable
+                        trg_map_node.nbr_paper_neighbours-=1
+
+                        #node was unmovable but can now be moved
+                        if trg_node_movable != trg_map_node.is_movable:
+                                removal_node_stack.append(trg_map_node)
+
+                        
+
+
+def recursive_node_removal(map_node_matrix : list[list[MapNode]]):
+
+        #Store nodes to be removed and later process it's neighbours
+        removal_node_stack : list = []
+        nodes_removed : int = 0
+
+        #Initial round: Populate stack with every movable node
+        for node_row in map_node_matrix:
+                for node in node_row:
+                        if node.is_movable:
+                                removal_node_stack.append(node)
+
+
+        print(len(removal_node_stack))
+
+        #Remove nodes
+        while(removal_node_stack):
+                node_to_remove = removal_node_stack.pop()
+
+                if node_to_remove.is_paper_roll: 
+                        nodes_removed += 1
+                        node_to_remove.is_paper_roll = False
+                        _update_neighbour_after_removal(node_to_remove.id[0], node_to_remove.id[1], map_node_matrix, removal_node_stack)
+
+        return nodes_removed
+
+
+
 def _count_movable_nodes(map_node_matrix : list[list[MapNode]]) -> int:
         return sum(node.is_movable for row in map_node_matrix for node in row)
 
@@ -102,9 +153,14 @@ def main() -> None:
         #Process Input
         map_node_matrix = process_input(parsed_input)
 
-        #Examine Output
+        #Examine Output part 1
         _print_movables(map_node_matrix)
-        print(_count_movable_nodes(map_node_matrix))
+        print(f"Initial nbr of movable nodes: {_count_movable_nodes(map_node_matrix)}")
+
+        #Examine Output part 2
+        nbr_removed : int = recursive_node_removal(map_node_matrix)
+        _print_movables(map_node_matrix)
+        print(f"Total number of rolls removed {nbr_removed}")
 
 
 if __name__ == '__main__':
