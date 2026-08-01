@@ -81,10 +81,11 @@ def process_input(parsed_input : list[str]):
         return map_node_matrix
 
 
-def _update_neighbour_after_removal(row : int, col : int, map_node_matrix : list[list[MapNode]], removal_node_stack : list[MapNode]):
+def _update_neighbour_after_removal(node_to_remove: MapNode, map_node_matrix : list[list[MapNode]], removal_node_stack : list[MapNode]):
 
-        l_col : int = len(map_node_matrix)
-        l_row : int = len(map_node_matrix[0]) # Assumes same length rows
+        row, col = node_to_remove.id
+        number_of_rows : int = len(map_node_matrix)
+        number_of_columns : int = len(map_node_matrix[0]) # Assumes same length rows
 
         #As we are building the table dynamically and updating both nodes, we only need to check for neighbours which have been previously created
         _DIRECTIONS = [ (-1,-1), (-1,0), (-1,1), ( 0,-1), (0,1), (1,-1), (1,0), (1,1)]
@@ -92,13 +93,13 @@ def _update_neighbour_after_removal(row : int, col : int, map_node_matrix : list
         for dr, dc in _DIRECTIONS:
                 nr, nc = row + dr, col + dc
 
-                if  0 <= nr < l_row and 0 <= nc < l_col:
+                if  0 <= nr < number_of_rows and 0 <= nc < number_of_columns:
                         trg_map_node : MapNode = map_node_matrix[nr][nc]
-                        trg_node_movable : bool = trg_map_node.is_movable
-                        trg_map_node.nbr_paper_neighbours-=1
+                        pre_trg_node_movable : bool = trg_map_node.is_movable
 
+                        trg_map_node.nbr_paper_neighbours-=1
                         #node was unmovable but can now be moved
-                        if trg_node_movable != trg_map_node.is_movable:
+                        if pre_trg_node_movable != trg_map_node.is_movable:
                                 removal_node_stack.append(trg_map_node)
 
                         
@@ -116,9 +117,6 @@ def recursive_node_removal(map_node_matrix : list[list[MapNode]]):
                         if node.is_movable:
                                 removal_node_stack.append(node)
 
-
-        print(len(removal_node_stack))
-
         #Remove nodes
         while(removal_node_stack):
                 node_to_remove = removal_node_stack.pop()
@@ -126,7 +124,7 @@ def recursive_node_removal(map_node_matrix : list[list[MapNode]]):
                 if node_to_remove.is_paper_roll: 
                         nodes_removed += 1
                         node_to_remove.is_paper_roll = False
-                        _update_neighbour_after_removal(node_to_remove.id[0], node_to_remove.id[1], map_node_matrix, removal_node_stack)
+                        _update_neighbour_after_removal(node_to_remove, map_node_matrix, removal_node_stack)
 
         return nodes_removed
 
