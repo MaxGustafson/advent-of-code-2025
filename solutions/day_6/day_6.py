@@ -35,7 +35,7 @@ def _solve_cephalopod_math_problems(number_groups : list[list[int]], operators :
                 ttl_sum+= math.prod(number_groups[i])
 
             else:
-                raise(ValueError, "Unhandled operator!")
+                raise ValueError("Unhandled operator!")
 
         return ttl_sum
                     

@@ -20,7 +20,6 @@ class DataReader():
 
         def read_input_cephalopod(self):
 
-                print("***Entering Function***")
                 #Cephalopod_numbers in machine readable format
                 #Structure: [groups[numbers]]
                 cephalopod_numbers : list[int] = list()
@@ -38,10 +37,8 @@ class DataReader():
 
                                 for i in range(len(row)):
                                         char = row[i]
-                                        print(f"Evaluating: {char}")
 
                                         if char.isnumeric():
-                                                print(f"{cephalopod_numbers[i]} -> {cephalopod_numbers[i] * 10 + int(char)}")
                                                 #increase significance of existing numbers
                                                 cephalopod_numbers[i] =  cephalopod_numbers[i] * 10 + int(char)
 
