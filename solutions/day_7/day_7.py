@@ -1,7 +1,26 @@
 from data_reader import DataReader
 from pathlib import Path
 
-_PATH : Path = '/'.join(["day_7", "data", 'input.txt'])
+_PATH : Path = '/'.join(["day_7", "data", 'input_mini.txt'])
+
+
+def _calculate_number_of_timelines(levels : list[str]):
+
+        #Every other input row holds no information
+        levels_curated = [level for i, level in enumerate(levels) if i%2 == 0]
+
+        #Discard start_level row. Solution instead assumes first for with split has one and only one split
+        #which is the root node
+        start_level = levels_curated.pop(0)
+
+        for level in levels_curated:
+
+                for i,idx in [(i,idx) for i,idx in enumerate(levels) if idx == '^']:
+                        ... 
+                        #Build node
+                        #How to keep track of child nodes being hit?
+
+                        
 
 
 def _process_levels(levels : list[str]):
@@ -38,15 +57,19 @@ def _process_levels(levels : list[str]):
                 #Assign new beam positions
                 beam_locations = delta_beam_locations
 
-        print(f"nbr_splits : {nbr_splits}")
-                        
+        return nbr_splits                
 
 def main():
 
         data_reader : DataReader = DataReader(_PATH)
 
         levels : list[str] = data_reader.read_input()
-        _process_levels(levels)
+        nbr_splits : int = _process_levels(levels.copy())
+
+        print(f"Part 1: nbr_splits : {nbr_splits}")
+
+        _calculate_number_of_timelines(levels)
+
 
 
 if __name__ == '__main__':
